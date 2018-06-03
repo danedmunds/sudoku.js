@@ -5,7 +5,7 @@ import './index.css';
 
 function Square(props) {
   return (
-    <button className="square" onClick={props.onClick}>
+    <button className="square" onClick={props.onClick} onKeyPress={props.onKeyPress}>
       {props.value}
     </button>
   );
@@ -24,23 +24,35 @@ class Board extends React.Component {
     };
   }
 
-  handleClick(x, y) {
+  handleClick (x, y) {
+    this.setAt(x, y, 'X')
+  }
+
+  handleKeyPress (e, x, y) {
+    const asNum = _.toNumber(e.key)
+    if (_.isNumber(asNum)) {
+      this.setAt(x, y, asNum) 
+    }
+  }
+
+  setAt (x, y, val) {
     const squares = _.cloneDeep(this.state.squares);
-    squares[x][y] = 'X';
+    squares[x][y] = val;
     this.setState({squares: squares});
   }
 
-  renderSquare(x, y) {
+  renderSquare (x, y) {
     return (
       <Square
         key={`${x}${y}`}
-        value={this.state.squares[x][y] || `${x}${y}`}
-        onClick={() => this.handleClick(x, y)}
+        value={this.state.squares[x][y] || ''}
+        // onClick={() => this.handleClick(x, y)}
+        onKeyPress={(e)=> this.handleKeyPress(e, x, y)}
       />
     );
   }
 
-  renderRow(y) {
+  renderRow (y) {
     return (
       <div className="board-row" key={`row${y}`}>
       {
@@ -52,7 +64,7 @@ class Board extends React.Component {
     )
   }
 
-  render() {
+  render () {
     return (
       <div>
         {
